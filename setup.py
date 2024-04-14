@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='cybersailor',
-    version='0.1.1',
+    version='0.1.3',
     packages=find_packages(),
     description='Cybersailor Python SDK',
     long_description=open('README.md').read(),
@@ -12,7 +12,7 @@ setup(
     license='MIT',
     install_requires=[
         'requests>=2.23.0',
-        'carthooks>=0.1.1'
+        'carthooks>=0.1.2'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
