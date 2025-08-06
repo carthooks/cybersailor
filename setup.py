@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='cybersailor',
-    version='0.1.8',
+    version='0.1.9',
     packages=find_packages(),
     description='Cybersailor Python SDK',
     long_description=open('README.md').read(),
@@ -11,7 +11,7 @@ setup(
     author_email='developer@carthooks.com',
     license='MIT',
     install_requires=[
-        'carthooks>=0.1.6'
+        'carthooks>=0.1.7'
     ],
     classifiers=[
         'Programming Language :: Python :: 3',

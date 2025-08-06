@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nomi-02-toworkorder
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nomi-02-toworkorder
+  template:
+    metadata:
+      labels:
+        app: nomi-02-toworkorder
+    spec:
+      # InitContainer to upgrade packages
+      initContainers:
+      - name: upgrade-packages
+        image: registry.cn-hongkong.aliyuncs.com/effiprint/nomi-service:2025-08-07-00-40-31
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Upgrading packages..."
+          pip install carthooks==0.1.6 cybersailor==0.1.8 --target /shared/packages
+          echo "Package upgrade completed"
+          ls -la /shared/packages/
+        volumeMounts:
+        - name: packages
+          mountPath: /shared/packages
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      
+      # Main application container
+      containers:
+      - name: nomi-02-toworkorder
+        image: registry.cn-hongkong.aliyuncs.com/effiprint/nomi-service:2025-08-07-00-40-31
+        imagePullPolicy: Always
+        command:
+        - python
+        - 02-to-workorder.py
+        env:
+        - name: VERSION
+          value: "1.2"
+        - name: PYTHONPATH
+          value: "/shared/packages:/usr/local/lib/python3.10/site-packages"
+        resources:
+          limits:
+            cpu: "10"
+            memory: 3Gi
+          requests:
+            cpu: 10m
+            memory: 16Mi
+        volumeMounts:
+        - mountPath: /app/.env
+          name: config-volume
+          subPath: env.conf
+        - mountPath: /app/data
+          name: data-volume
+        - name: packages
+          mountPath: /shared/packages
+          readOnly: true
+      
+      imagePullSecrets:
+      - name: aliyun-docker
+      
+      volumes:
+      - name: config-volume
+        secret:
+          defaultMode: 420
+          items:
+          - key: env.conf
+            path: env.conf
+          secretName: nomi-config
+      - name: data-volume
+        hostPath:
+          path: /mnt/effiprint/data
+          type: DirectoryOrCreate
+      - name: packages
+        emptyDir: {}
