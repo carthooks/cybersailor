@@ -83,6 +83,13 @@ class Context:
 
 class Sailor:
     def __init__(self, token=None, sailor_id=None):
+        # 添加调试信息确认使用本地文件
+        print("=" * 60)
+        print("🚀 使用本地开发版本的 cybersailor SDK")
+        print(f"📁 文件路径: {__file__}")
+        print(f"📦 模块路径: {__name__}")
+        print("=" * 60)
+        
         self.tasks = []
         self.logger = Logger("cybersailor")
         self.client = Client()
@@ -93,8 +100,11 @@ class Sailor:
             self.sailor_id = sailor_id
 
     def subscribe(self, **kwargs):
+        print("🔔 本地 SDK: 正在设置订阅...")
+        print(f"📋 订阅参数: {kwargs}")
         task = Task(**kwargs)
         self.tasks.append(task)
+        print(f"✅ 本地 SDK: 订阅已添加，当前任务数: {len(self.tasks)}")
 
     def lock(self, record, lock_timeout=600, subject=None):
         self.logger.debug(f"Locking task: {record}")
@@ -114,6 +124,7 @@ class Sailor:
         return result
 
     def run(self):
+        print("🏃 本地 SDK: 开始运行...")
         self.logger.debug("Running...")
 
         while True:
